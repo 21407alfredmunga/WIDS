@@ -1,23 +1,23 @@
 #!/bin/bash
 
 # Name of the virtual environment
-ENV_NAME="datascience_env"
+ENV_NAME="${1:-datascience_env}"  # Use first argument if provided, otherwise default
 
 # Python version
 PYTHON_VERSION="python3"
 
-# Check if venv module is available (it's included in Python 3.3+)
-if ! $PYTHON_VERSION -c "import venv" &> /dev/null; then
+# Check if venv module is available
+if ! "$PYTHON_VERSION" -c "import venv" &> /dev/null; then
     echo "Python venv module not found. Please ensure you have Python 3.3+ installed."
     exit 1
 fi
 
 # Create a virtual environment
 echo "Creating virtual environment: $ENV_NAME"
-$PYTHON_VERSION -m venv $ENV_NAME
+"$PYTHON_VERSION" -m venv "$ENV_NAME"
 
 # Activate the virtual environment
-source $ENV_NAME/bin/activate
+source "$ENV_NAME/bin/activate"
 
 # Upgrade pip
 pip install --upgrade pip
@@ -32,30 +32,17 @@ PACKAGES=(
     scikit-learn
     jupyter
     jupyterlab
+    openpyxl  # Add this for Excel support
     statsmodels
-    sympy
-    tensorflow
-    keras
-    torch
-    torchvision
     xgboost
     lightgbm
-    catboost
-    plotly
-    bokeh
-    streamlit
-    pydot
 )
 
-# Install packages
+# Install packages (using proper array expansion)
 echo "Installing data science packages..."
-for package in "${PACKAGES[@]}"
-do
-    pip install $package
+for package in "${PACKAGES[@]}"; do
+    pip install "$package"
 done
-
-# Deactivate the virtual environment
-deactivate
 
 echo "Data science Python environment setup complete!"
 echo "To activate the environment, use: source $ENV_NAME/bin/activate"
